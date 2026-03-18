@@ -2,6 +2,10 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
+    if (process.env.NODE_ENV === "production" && !process.env.VERCEL_ENV) {
+    return Response.json([]);
+}
+
 try {
     const posts = await prisma.post.findMany({
     include: { user: true },
@@ -11,7 +15,7 @@ try {
     return Response.json(posts);
 } catch (error) {
     console.error("GET ERROR:", error);
-    return Response.json([], { status: 200 });
+    return Response.json([]);
 }
 }
 
